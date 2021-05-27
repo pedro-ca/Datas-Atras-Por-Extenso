@@ -8,16 +8,93 @@ namespace DatasAtrasExtenso
     {
         private DateTime dataInicial;
         private DateTime dataFinal;
+        private TimeSpan diferencaDatas;
+        private double diferencaDias;
+
 
         public DataPassadoExtenso(DateTime dataInicial, DateTime dataFinal)
         {
             this.dataInicial = dataInicial;
             this.dataFinal = dataFinal;
+            this.diferencaDatas = dataFinal - dataInicial;
+
+            diferencaDias = diferencaDatas.TotalDays;
         }
 
         public string ConverterParaExtenso()
         {
-            throw new NotImplementedException();
+            string dataExtenso = "";
+            int diasInteiros = Convert.ToInt32(diferencaDias);
+
+            dataExtenso += ConverteDias(diasInteiros);
+
+            dataExtenso += "atrás";
+            return dataExtenso;
+        }
+
+        private string ConverteDias(int diasInteiros)
+        {
+            string dataParaExtenso = "";
+            int anosInteiros = diasInteiros / 365;
+            diasInteiros %= 365;
+
+            int mesesInteiros = diasInteiros / 30;
+            diasInteiros %= 30;
+
+            int semanasInteiras = diasInteiros / 7;
+            diasInteiros %= 7;
+
+            if (anosInteiros > 0)
+            {
+                if (anosInteiros > 9)
+                    dataParaExtenso += ReceberDezenas(anosInteiros.ToString());
+                else
+                    dataParaExtenso += ReceberUnidades(anosInteiros.ToString());
+
+                if (anosInteiros == 1)
+                    dataParaExtenso += "ano ";
+                else
+                    dataParaExtenso += "anos ";
+            }
+
+            if (mesesInteiros > 0)
+            {
+                if (!string.IsNullOrEmpty(dataParaExtenso))
+                    dataParaExtenso += "e ";
+
+                dataParaExtenso += ReceberUnidades(mesesInteiros.ToString());
+                if (mesesInteiros == 1)
+                    dataParaExtenso += "mes ";
+                else
+                    dataParaExtenso += "meses ";
+            }
+
+            if (semanasInteiras > 0)
+            {
+                if (!string.IsNullOrEmpty(dataParaExtenso))
+                    dataParaExtenso += "e ";
+
+                if (semanasInteiras == 1)
+                    dataParaExtenso += "uma semana ";
+                else if (semanasInteiras == 2)
+                    dataParaExtenso += "duas semanas ";
+                else
+                    dataParaExtenso += ReceberUnidades(semanasInteiras.ToString())+"semanas ";
+            }
+
+            if (diasInteiros > 0)
+            {
+                if (!string.IsNullOrEmpty(dataParaExtenso))
+                    dataParaExtenso += "e ";
+
+                dataParaExtenso += ReceberUnidades(diasInteiros.ToString());
+                if (diasInteiros == 1)
+                    dataParaExtenso += "dia ";
+                else
+                    dataParaExtenso += "dias ";
+            }
+
+            return dataParaExtenso;
         }
 
         private string ReceberUnidades(string numero)
