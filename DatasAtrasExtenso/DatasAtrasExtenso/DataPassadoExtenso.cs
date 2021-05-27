@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DatasAtrasExtenso
 {
@@ -10,6 +8,7 @@ namespace DatasAtrasExtenso
         private DateTime dataFinal;
         private TimeSpan diferencaDatas;
         private double diferencaDias;
+        private double diferencaSegundos;
 
 
         public DataPassadoExtenso(DateTime dataInicial, DateTime dataFinal)
@@ -19,14 +18,21 @@ namespace DatasAtrasExtenso
             this.diferencaDatas = dataFinal - dataInicial;
 
             diferencaDias = diferencaDatas.TotalDays;
+            diferencaSegundos = diferencaDatas.Seconds;     //deveria estar pegando horas, minutos e segundos juntos. atualmente pegando só segundos
         }
 
         public string ConverterParaExtenso()
         {
             string dataExtenso = "";
-            int diasInteiros = Convert.ToInt32(diferencaDias);
 
+            int diasInteiros = Convert.ToInt32(diferencaDias);
             dataExtenso += ConverteDias(diasInteiros);
+
+            if (diferencaDatas.Seconds > 0)
+            {
+                int segundosInteiros = Convert.ToInt32(diferencaDatas.Seconds);
+                dataExtenso += ConverteDias(diasInteiros);
+            }
 
             dataExtenso += "atrás";
             return dataExtenso;
@@ -34,7 +40,7 @@ namespace DatasAtrasExtenso
 
         private string ConverteDias(int diasInteiros)
         {
-            string dataParaExtenso = "";
+            string diasParaExtenso = "";
             int anosInteiros = diasInteiros / 365;
             diasInteiros %= 365;
 
@@ -47,51 +53,100 @@ namespace DatasAtrasExtenso
             if (anosInteiros > 0)
             {
                 if (anosInteiros > 9)
-                    dataParaExtenso += ReceberDezenas(anosInteiros.ToString());
+                    diasParaExtenso += ReceberDezenas(anosInteiros.ToString());
                 else
-                    dataParaExtenso += ReceberUnidades(anosInteiros.ToString());
+                    diasParaExtenso += ReceberUnidades(anosInteiros.ToString());
 
                 if (anosInteiros == 1)
-                    dataParaExtenso += "ano ";
+                    diasParaExtenso += "ano ";
                 else
-                    dataParaExtenso += "anos ";
+                    diasParaExtenso += "anos ";
             }
 
             if (mesesInteiros > 0)
             {
-                if (!string.IsNullOrEmpty(dataParaExtenso))
-                    dataParaExtenso += "e ";
+                if (!string.IsNullOrEmpty(diasParaExtenso))
+                    diasParaExtenso += "e ";
 
-                dataParaExtenso += ReceberUnidades(mesesInteiros.ToString());
+                diasParaExtenso += ReceberUnidades(mesesInteiros.ToString());
                 if (mesesInteiros == 1)
-                    dataParaExtenso += "mes ";
+                    diasParaExtenso += "mes ";
                 else
-                    dataParaExtenso += "meses ";
+                    diasParaExtenso += "meses ";
             }
 
             if (semanasInteiras > 0)
             {
-                if (!string.IsNullOrEmpty(dataParaExtenso))
-                    dataParaExtenso += "e ";
+                if (!string.IsNullOrEmpty(diasParaExtenso))
+                    diasParaExtenso += "e ";
 
                 if (semanasInteiras == 1)
-                    dataParaExtenso += "uma semana ";
+                    diasParaExtenso += "uma semana ";
                 else if (semanasInteiras == 2)
-                    dataParaExtenso += "duas semanas ";
+                    diasParaExtenso += "duas semanas ";
                 else
-                    dataParaExtenso += ReceberUnidades(semanasInteiras.ToString())+"semanas ";
+                    diasParaExtenso += ReceberUnidades(semanasInteiras.ToString())+"semanas ";
             }
 
             if (diasInteiros > 0)
             {
+                if (!string.IsNullOrEmpty(diasParaExtenso))
+                    diasParaExtenso += "e ";
+
+                diasParaExtenso += ReceberUnidades(diasInteiros.ToString());
+                if (diasInteiros == 1)
+                    diasParaExtenso += "dia ";
+                else
+                    diasParaExtenso += "dias ";
+            }
+
+            return diasParaExtenso;
+        }
+
+        public string ConverterSegundos(int segundosExtenso)
+        {
+            string dataParaExtenso = "";
+            int horasExtenso = segundosExtenso / 60;
+            segundosExtenso %= 60;
+
+            int mintuosExtenso = segundosExtenso / 60;
+            segundosExtenso %= 60;
+
+            if (horasExtenso > 0)
+            {
+                if (horasExtenso > 9)
+                    dataParaExtenso += ReceberDezenas(horasExtenso.ToString());
+                else
+                    dataParaExtenso += ReceberUnidades(horasExtenso.ToString());
+
+                if (horasExtenso == 1)
+                    dataParaExtenso += "hora ";
+                else
+                    dataParaExtenso += "horas ";
+            }
+
+            if (mintuosExtenso > 0)
+            {
                 if (!string.IsNullOrEmpty(dataParaExtenso))
                     dataParaExtenso += "e ";
 
-                dataParaExtenso += ReceberUnidades(diasInteiros.ToString());
-                if (diasInteiros == 1)
-                    dataParaExtenso += "dia ";
+                dataParaExtenso += ReceberUnidades(mintuosExtenso.ToString());
+                if (mintuosExtenso == 1)
+                    dataParaExtenso += "minutos ";
                 else
-                    dataParaExtenso += "dias ";
+                    dataParaExtenso += "minuto ";
+            }
+
+            if (segundosExtenso > 0)
+            {
+                if (!string.IsNullOrEmpty(dataParaExtenso))
+                    dataParaExtenso += "e ";
+
+                dataParaExtenso += ReceberUnidades(segundosExtenso.ToString());
+                if (segundosExtenso == 1)
+                    dataParaExtenso += "segundo ";
+                else
+                    dataParaExtenso += "segundo ";
             }
 
             return dataParaExtenso;
